@@ -1,19 +1,19 @@
-import express from 'express';
-import userRoutes from './src/routes/user.js';
+const express = require('express');
+const userRoutes = require('./src/routes/user.js');
 
 const app = express();
-
 app.use(express.json());
 
-// Aquí montas las rutas
+// Montamos las rutas de usuario bajo /api
 app.use('/api', userRoutes);
 
+// Ruta de prueba para navegador
 app.get('/', (req, res) => {
-  const name = process.env.NAME || 'World';
-  res.send(`Hello ${name}!`);
+  res.send('<h1>Servidor backend corriendo 🚀</h1><p>Prueba las rutas en /api</p>');
 });
 
-const port = parseInt(process.env.PORT) || 8080;
+// Puerto
+const port = process.env.PORT || 8080;
 app.listen(port, () => {
-  console.log(`listening on port ${port}`);
+  console.log(`✅ Servidor escuchando en: http://localhost:${port}`);
 });

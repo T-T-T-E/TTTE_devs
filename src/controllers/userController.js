@@ -1,8 +1,8 @@
-import userModel from '../models/user.js';
-import bcrypt from 'bcryptjs';
+const userModel = require('../models/user.js');
+const bcrypt = require('bcryptjs');
 
 // Lógica para registrar un nuevo usuario como 'cliente'
-export const register = async (req, res) => {
+const register = async (req, res) => {
   const { nombre_completo, email, password, telefono } = req.body;
 
   try {
@@ -32,3 +32,5 @@ export const register = async (req, res) => {
     res.status(500).json({ message: 'Error interno del servidor.' });
   }
 };
+
+module.exports = { register };
