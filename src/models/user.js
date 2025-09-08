@@ -37,8 +37,39 @@ const findUserByEmail = async (email) => {
   }
 };
 
+//OBTENER TODOS LOS USUARIOS
+const getAllUsers = async () => {
+  const [rows] = await pool.promise().query('SELECT * FROM usuarios');
+  return rows;
+};
+
+// OBTENER USUARIO POR ID
+const getUserById = async (id) => {
+  const [rows] = await pool.promise().query('SELECT * FROM usuarios WHERE id = ?', [id]);
+  return rows[0];
+};
+
+// ELIMINAR USUARIO
+const deleteUser = async (id) => {
+  const [result] = await pool.promise().query('DELETE FROM usuarios WHERE id = ?', [id]);
+  return result;
+};
+
+// ACTUALIZAR USUARIO
+const updateUser = async (id, data) => {
+  const { nombre_completo, email, telefono } = data;
+  const [result] = await pool.promise().query(
+    'UPDATE usuarios SET nombre_completo = ?, email = ?, telefono = ? WHERE id = ?',
+    [nombre_completo, email, telefono, id]
+  );
+  return result;
+};
 module.exports = {
   findRoleIdByName,
   createUser,
-  findUserByEmail
+  findUserByEmail,
+  getAllUsers,
+  getUserById,
+  deleteUser,
+  updateUser
 };
