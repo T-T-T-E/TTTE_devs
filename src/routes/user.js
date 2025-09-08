@@ -1,9 +1,21 @@
-import { Router } from 'express';
-import { register } from '../controllers/userController.js';
+const express = require('express');
+const { register, getUsers, getUserById, deleteUser, updateUser } = require('../controllers/userController.js');
 
-const router = Router();
+const router = express.Router();
 
 // Ruta para registrar usuario
 router.post('/register', register);
 
-export default router;
+//Obtener todos los usuarios
+router.get('/users', getUsers);
+
+// Obtener un usuario por ID
+router.get('/users/:id', getUserById);
+
+// Eliminar un usuario
+router.delete('/users/:id', deleteUser);
+
+// Actualizar un usuario
+router.put('/users/:id', updateUser);
+
+module.exports = router;
