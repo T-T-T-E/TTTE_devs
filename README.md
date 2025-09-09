@@ -69,3 +69,7 @@ CREATE TABLE IF NOT EXISTS citas (
   FOREIGN KEY (id_servicio) REFERENCES servicios(id),
   FOREIGN KEY (id_barbero) REFERENCES usuarios(id) ON DELETE CASCADE
 );
+
+
+prueba de commit
+git commit -m "TBE-7 <message>"
