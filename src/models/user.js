@@ -1,7 +1,6 @@
 // Importación de módulos necesarios
 const pool = require('../config/db.js'); // Conexión a la base de datos (MySQL)
-const bcrypt = require('bcrypt');        // Librería para encriptar/validar contraseñas
-const jwt = require('jsonwebtoken');     // Librería para manejar tokens JWT
+const bcrypt = require('bcryptjs');     // Librería para encriptar contraseñas
 
 // =============================
 // FUNCIONES DEL MODELO DE USUARIO
@@ -25,6 +24,10 @@ const findRoleIdByName = async (roleName) => {
 const createUser = async (userData) => {
   const { nombre_completo, email, password, telefono, rol_id } = userData;
   try {
+
+     //  Encriptar la contraseña antes de guardarla
+     const hashedPassword = await bcrypt.hash(password, 10);
+
     const [result] = await pool.promise().query(
       'INSERT INTO usuarios (nombre_completo, email, password, telefono, rol_id) VALUES (?, ?, ?, ?, ?)',
       [nombre_completo, email, password, telefono, rol_id]
