@@ -109,6 +109,28 @@ const updateUser = async (req, res) => {
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'Usuario no encontrado.' });
     }
+
+    // Validar email si viene en la petición
+    if (email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res
+          .status(400)
+          .json({ message: "El correo electrónico no es válido." });
+      }
+    }
+
+    // Validar teléfono si viene en la petición
+    if (telefono) {
+      const phoneRegex = /^[0-9]{8,12}$/;
+      if (!phoneRegex.test(telefono)) {
+        return res
+          .status(400)
+          .json({ message: "El teléfono debe contener solo números (8 a 12 dígitos)." });
+      }
+    }
+
+        // Usar valores enviados o mantener los actuales
     const updateNombre = nombre_completo || result.nombre_completo;
     const updateTelefono = telefono || result.telefono;
     const updateEmail = email || result.email;
