@@ -79,10 +79,19 @@ const updateUser = async (req, res) => {
   const { id } = req.params;
   const { nombre_completo, email, telefono } = req.body;
   try {
-    const result = await userModel.updateUser(id, { nombre_completo, email, telefono });
+    const result = await userModel.getUserById(id);
+
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'Usuario no encontrado.' });
     }
+    const updateNombre = nombre_completo || result.nombre_completo;
+    const updateTelefono = telefono || result.telefono;
+    const updateEmail = email || result.email;
+
+    
+    await userModel.updateUser(id,
+       { nombre_completo: updateNombre, telefono: updateTelefono, email: updateEmail });
+
     res.status(200).json({ message: 'Usuario actualizado correctamente.' });
   } catch (error) {
     console.error(error);
