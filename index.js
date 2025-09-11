@@ -5,6 +5,9 @@ const serviceRoutes = require('./src/routes/service');
 const app = express();
 app.use(express.json());
 
+// Servir imágenes subidas
+app.use('/uploads', express.static('uploads'));
+
 // Montamos las rutas de usuario bajo /api
 app.use('/api', userRoutes);
 

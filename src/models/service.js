@@ -48,9 +48,14 @@ const deleteService = async (id) => {
 // Actualizar servicio
 const updateService = async (id, data) => {
     const { nombre_servicio, precio, foto_servicio } = data;
+
+    // Si foto_servicio no viene, se mantiene la actual
+    const service = await getServiceById(id);
+    const foto = foto_servicio || service.foto_servicio;
+
     const [result] = await pool.promise().query(
         'UPDATE servicios SET nombre_servicio = ?, precio = ?, foto_servicio = ? WHERE id = ?',
-        [nombre_servicio, precio, foto_servicio, id]
+        [nombre_servicio, precio, foto, id]
     );
     return result;
 };
