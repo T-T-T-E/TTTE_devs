@@ -6,18 +6,43 @@ const register = async (req, res) => {
   const { nombre_completo, email, password, telefono } = req.body;
 
   try {
+   // Validar email
+   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+   if (!emailRegex.test(email)) {
+     return res.status(400).json({ message: "El correo electrónico no es válido." });
+   }
+
+   // Validar password
+   if (!password || password.length < 6 || password.length > 12) {
+     return res
+       .status(400)
+       .json({ message: "La contraseña debe tener entre 6 y 12 caracteres." });
+   }
+
+   // Validar teléfono (solo números, entre 8 y 12 dígitos)
+   const phoneRegex = /^[0-9]{8,12}$/;
+   if (!phoneRegex.test(telefono)) {
+     return res
+       .status(400)
+       .json({ message: "El teléfono debe contener solo números (8 a 12 dígitos)." });
+   }
+
+        // Verificar si el usuario ya existe
     const existingUser = await userModel.findUserByEmail(email);
     if (existingUser) {
       return res.status(409).json({ message: 'El correo electrónico ya está registrado.' });
     }
 
+        // Buscar rol cliente
     const clienteRoleId = await userModel.findRoleIdByName('cliente');
     if (!clienteRoleId) {
       return res.status(500).json({ message: 'Error: El rol de cliente no se encontró.' });
     }
 
+        // Encriptar contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
+        // Crear usuario
     const userId = await userModel.createUser({
       nombre_completo,
       email,
