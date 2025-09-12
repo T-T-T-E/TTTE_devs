@@ -1,66 +1,28 @@
-const bcrypt = require('bcryptjs');     // Librería para encriptar contraseñas
 const jwt = require('jsonwebtoken');     // Librería para manejar tokens JWT
-const { findUserByEmail } = require('../models/user'); //  IMPORTAR la función del modelo
+const JWT_SECRET =process.env.JWT_SECRET; 
 
-
-
-// =============================
-// LOGIN (AUTENTICACIÓN)
-// =============================
-
-const loginUser = async (email, password) => {
-    try {
-      // 1. Verificar si el usuario existe
-      const user = await findUserByEmail(email);
-      if (!user) {
-        return { success: false, message: 'Usuario no encontrado' };
-      }
-  
-      // 2. Comparar la contraseña ingresada con la guardada en hash
-      const validPassword = await bcrypt.compare(password, user.password);
-      if (!validPassword) {
-        return { success: false, message: 'Contraseña incorrecta' };
-      }
-  
-      // 3. Generar un token JWT
-      const token = jwt.sign(
-        { userId: user.id, rol: user.rol_id }, // payload
-        'secret_key',                          //  clave secreta 
-        { expiresIn: '1h' }                    // tiempo de expiración
-      );
-  
-      return { success: true, token };
-    } catch (error) {
-      throw error;
-    }
-  };
-  
-  
   // ======================================
   // MIDDLEWARE PARA VERIFICAR TOKEN JWT
   // ======================================
-  const verifyToken = (req, res, next) => {
-    const token = req.headers['authorization']; // Token viene en el header
+  exports.verifyToken = (req, res, next) => {
+    // Obtener el token del header 'Authorization'
+    const token = req.header('Authorization');
   
+      // Verificar si el token existe
+
     if (!token) {
-      return res.status(401).json({ message: 'No se proporcionó un token' });
+      return res.status(401).json({ message: 'Acceso denegado. No se proporcionó un token' });
     }
   
-    jwt.verify(token, 'secret_key', (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ message: 'Token inválido' });
-      }
-  
+    try {
+      // Verificar y decodificar el token
+      const decoded = jwt.verify(token.replace('Bearer ', ''), JWT_SECRET);
       req.userId = decoded.userId; // guardar id del usuario en la request
-      req.userRole = decoded.rol;  // también el rol si lo necesitas
-      next();
-    });
+      req.userRole = decoded.rol;  // también el rol si lo necesitas  
+      next(); // Pasar al siguiente middleware o controlador
+    } catch (err) {
+      res.status(401).json({ message: 'Token inválido o expirado.' });
+    }             
   };
-  
-  
-// Exportar todas las funciones para usarlas en controladores
-module.exports = {
-    loginUser, 
-    verifyToken
-  };  
+
 

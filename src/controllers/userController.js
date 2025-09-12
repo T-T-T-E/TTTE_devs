@@ -2,7 +2,7 @@ const userModel = require('../models/user.js');
 const bcrypt = require('bcryptjs');
 
 // Lógica para registrar un nuevo usuario como 'cliente'
-const register = async (req, res) => {
+exports.register = async (req, res) => {
   const { nombre_completo, email, password, telefono } = req.body;
 
   try {
@@ -54,12 +54,12 @@ const register = async (req, res) => {
     res.status(201).json({ message: 'Usuario registrado exitosamente como cliente.', userId });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Error interno del servidor.' });
+    res.status(500).json({ message: 'No se pudo crear el usuario.' });
   }
 };
 
 // OBTENER TODOS LOS USUARIOS
-const getUsers = async (req, res) => {
+exports.getUsers = async (req, res) => {
   try {
     const users = await userModel.getAllUsers();
     res.status(200).json(users);
@@ -70,7 +70,7 @@ const getUsers = async (req, res) => {
 };
 
 // OBTENER USUARIO POR ID
-const getUserById = async (req, res) => {
+exports.getUserById = async (req, res) => {
   const { id } = req.params;
   try {
     const user = await userModel.getUserById(id);
@@ -85,7 +85,7 @@ const getUserById = async (req, res) => {
 };
 
 // ELIMINAR USUARIO
-const deleteUser = async (req, res) => {
+exports.deleteUser = async (req, res) => {
   const { id } = req.params;
   try {
     const result = await userModel.deleteUser(id);
@@ -100,9 +100,9 @@ const deleteUser = async (req, res) => {
 };
 
 //ACTUALIZAR USUARIO
-const updateUser = async (req, res) => {
+exports.updateUser = async (req, res) => {
   const { id } = req.params;
-  const { nombre_completo, email, telefono } = req.body;
+  const { nombre_completo, email, telefono, password } = req.body;
   try {
     const result = await userModel.getUserById(id);
 
@@ -130,14 +130,26 @@ const updateUser = async (req, res) => {
       }
     }
 
+     // Validar password si viene en la petición
+     let hashedPassword = result.password;
+     if (password) {
+       if (password.length < 6 || password.length > 12) {
+         return res
+           .status(400)
+           .json({ message: "La contraseña debe tener entre 6 y 12 caracteres." });
+       }
+       hashedPassword = await bcrypt.hash(password, 10);
+     }
+
         // Usar valores enviados o mantener los actuales
     const updateNombre = nombre_completo || result.nombre_completo;
     const updateTelefono = telefono || result.telefono;
     const updateEmail = email || result.email;
+    const updatePassword = hashedPassword;
 
     
     await userModel.updateUser(id,
-       { nombre_completo: updateNombre, telefono: updateTelefono, email: updateEmail });
+       { nombre_completo: updateNombre, telefono: updateTelefono, email: updateEmail, password: updatePassword });
 
     res.status(200).json({ message: 'Usuario actualizado correctamente.' });
   } catch (error) {
@@ -146,10 +158,3 @@ const updateUser = async (req, res) => {
   }
 };
 
-module.exports = { 
-  register,
-  getUsers,
-  getUserById,
-  deleteUser,
-  updateUser
- };
