@@ -1,0 +1,6 @@
+# Ignorar la carpeta
+node_modules/
+
+# Ignorar todos los archivos en la carpeta uploads
+uploads/*
+!uploads/.gitkeep
