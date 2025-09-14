@@ -51,7 +51,7 @@ exports.createUser = async (citaData) => {
 };
 
 
-// Obtener todas las citas
+// Obtener todas las citassss
 exports.getAllUsers = async () => {
   try {
     const [rows] = await db.promise().query('SELECT * FROM citas');
