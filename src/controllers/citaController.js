@@ -2,7 +2,7 @@ const citaModel = require('../models/cita.js');
 
 // Lógica para asignar una cita
 exports.asignarc = async (req, res) => {
-  const { nombre_cliente, id_servicio, id_barbero, fecha, hora } = req.body;
+const { nombre_cliente, id_servicio, id_barbero, fecha, hora } = req.body;
 
   try {
     // Validar formato de fecha (asegura que no sea un string vacío o nulo)
@@ -37,4 +37,15 @@ exports.asignarc = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'No se pudo crear la cita.' });
   }
+};
+
+//OBTENER TODOS LAS CITAS
+exports.getCitas = async (req, res) => {
+  try {
+    const citas = await citaModel.getAllCitas();
+    res.status(200).json(citas);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al obtener las citas.' });
+  }
 };
