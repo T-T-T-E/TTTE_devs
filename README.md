@@ -70,6 +70,9 @@ CREATE TABLE IF NOT EXISTS citas (
   FOREIGN KEY (id_barbero) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 
+--Contraseña 123456a como admin
 
-prueba de commit
-git commit -m "TBE-7 <message>"
+INSERT INTO usuarios (nombre_completo, telefono, email, password, rol_id)
+VALUES ('Chato', '77777777', 'admin@gmail.com', '$2a$10$w00TfTyf.VanuijxTW.sfuOIkKE4X22NRj9IU2UZu7ndDjR.lDod.', 3);
+
+

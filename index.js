@@ -1,6 +1,7 @@
 const express = require('express');
 const userRoutes = require('./src/routes/user.js');
 const serviceRoutes = require('./src/routes/service');
+const citaRoutes = require('./src/routes/cita');
 
 const app = express();
 app.use(express.json());
@@ -12,6 +13,8 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api', userRoutes);
 
 app.use('/servicios', serviceRoutes);
+
+app.use('/citas', citaRoutes);
 
 // Ruta de prueba para navegador
 app.get('/', (req, res) => {
