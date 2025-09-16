@@ -58,6 +58,63 @@ exports.register = async (req, res) => {
   }
 };
 
+// CREAR USUARIO (Admin o Barbero)
+exports.createUserWithRole = async (req, res) => {
+  const { nombre_completo, email, password, telefono, rol } = req.body;
+
+  try {
+    // Validaciones básicas
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "El correo electrónico no es válido." });
+    }
+
+    if (!password || password.length < 6 || password.length > 12) {
+      return res.status(400).json({ message: "La contraseña debe tener entre 6 y 12 caracteres." });
+    }
+
+    const phoneRegex = /^[0-9]{8,12}$/;
+    if (!phoneRegex.test(telefono)) {
+      return res.status(400).json({ message: "El teléfono debe contener solo números (8 a 12 dígitos)." });
+    }
+
+    // Verificar si ya existe
+    const existingUser = await userModel.findUserByEmail(email);
+    if (existingUser) {
+      return res.status(409).json({ message: 'El correo electrónico ya está registrado.' });
+    }
+
+    // Verificar permisos según el rol del creador
+    const creatorRole = req.userRole; // ← viene del token JWT
+    if (creatorRole === 'barbero' && rol === 'admin') {
+      return res.status(403).json({ message: 'Los barberos no pueden crear administradores.' });
+    }
+
+    // Buscar rol solicitado
+    const roleId = await userModel.findRoleIdByName(rol);
+    if (!roleId) {
+      return res.status(400).json({ message: 'El rol especificado no existe.' });
+    }
+
+    // Encriptar contraseña
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Crear usuario
+    const userId = await userModel.createUser({
+      nombre_completo,
+      email,
+      password: hashedPassword,
+      telefono,
+      rol_id: roleId,
+    });
+
+    res.status(201).json({ message: `Usuario creado exitosamente con rol ${rol}.`, userId });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'No se pudo crear el usuario con rol.' });
+  }
+};
+
 // OBTENER TODOS LOS USUARIOS
 exports.getUsers = async (req, res) => {
   try {
@@ -75,7 +132,7 @@ exports.getUserById = async (req, res) => {
   try {
     const user = await userModel.getUserById(id);
     if (!user) {
-      return res.status(404).json({ message: 'Usuario no encontrado.' });
+      return res.status(404).json({ message: 'Usuario no se encontro.' });
     }
     res.status(200).json(user);
   } catch (error) {

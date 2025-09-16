@@ -54,7 +54,13 @@ exports.getAllUsers = async () => {
 exports.getUserById = async (id) => {
   try {
   const [rows] = await db.promise().query('SELECT * FROM usuarios WHERE id = ?', [id]);
-  return rows[0];
+  console.log("getUserById rows:", rows);
+
+
+  const [dbName] = await db.promise().query('SELECT DATABASE() as db');
+console.log("Conectado a la BD:", dbName[0].db);
+return rows[0];
+
 }catch (error) {
   console.error('Error al obtener usuario por ID:', error);
   throw error;
