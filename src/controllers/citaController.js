@@ -64,3 +64,18 @@ exports.getCitaById = async (req, res) => {
     res.status(500).json({ message: 'Error al obtener ls cita' });
   }
 };
+
+// ELIMINAR CITA
+exports.deleteCita = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await citaModel.deleteCita(id);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'cita no encontrada.' });
+    }
+    res.status(200).json({ message: 'Cita eliminada correctamente.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al eliminar la cita.' });
+  }
+};
