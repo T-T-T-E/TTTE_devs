@@ -16,10 +16,10 @@ const createService = async (req, res) => {
         }
 
         // Verificar permisos según el rol del creador
-    const creatorRole = req.userRole; // ← viene del token JWT
-    if (creatorRole === 'barbero' && rol === 'admin') {
-      return res.status(403).json({ message: 'Los clientes nopueden crear servicios.' });
-    }
+        const creatorRole = req.userRole; // ← viene del token JWT
+        if (creatorRole === 'barbero' && rol === 'admin') {
+            return res.status(403).json({ message: 'Los clientes nopueden crear servicios.' });
+        }
 
         // Manejo de imagen
         const foto_servicio = req.file ? `uploads/${req.file.filename}` : null;
@@ -43,19 +43,19 @@ const getAllServices = async (req, res) => {
 
 // Obtener un servicio por ID
 const getServiceById = async (req, res) => {
-    const { id } = req.params;  
+    const { id } = req.params;
     try {
         const service = await serviceModel.getServiceById(id);
         if (!service) return res.status(404).json({ message: 'Servicio no encontrado' });
         res.status(200).json(service);
     } catch (error) {
         res.status(500).json({ message: 'Error al obtener el servicio', error: error.message });
-    }   
+    }
 
     // Verificar permisos según el rol del creador
     const creatorRole = req.userRole; // ← viene del token JWT
     if (creatorRole === 'barbero' && rol === 'admin') {
-      return res.status(403).json({ message: 'No posee permisos para realizar esta accion.' });
+        return res.status(403).json({ message: 'No posee permisos para realizar esta accion.' });
     }
 };
 
@@ -89,13 +89,13 @@ const updateService = async (req, res) => {
             foto_servicio
         });
 
-        
+
 
         // Verificar permisos según el rol del creador
-    const creatorRole = req.userRole; // ← viene del token JWT
-    if (creatorRole === 'barbero' && rol === 'admin') {
-      return res.status(403).json({ message: 'No posee permisos para realizar esta accion.' });
-    }
+        const creatorRole = req.userRole; // ← viene del token JWT
+        if (creatorRole === 'barbero' && rol === 'admin') {
+            return res.status(403).json({ message: 'No posee permisos para realizar esta accion.' });
+        }
 
         res.status(200).json({ message: 'Servicio actualizado exitosamente' });
     } catch (error) {
@@ -116,10 +116,10 @@ const deleteService = async (req, res) => {
             if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
         }
 
-            // Verificar permisos según el rol del creador  
+        // Verificar permisos según el rol del creador  
         const creatorRole = req.userRole; // ← viene del token JWT
         if (creatorRole === 'barbero' && rol === 'admin') {
-          return res.status(403).json({ message: 'No posee permisos para realizar esta accion.' });
+            return res.status(403).json({ message: 'No posee permisos para realizar esta accion.' });
         }
 
         await serviceModel.deleteService(id);
