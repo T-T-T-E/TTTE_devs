@@ -167,6 +167,12 @@ exports.updateUser = async (req, res) => {
       return res.status(404).json({ message: 'Usuario no encontrado.' });
     }
 
+        // Verificar si el usuario ya existe
+        const existingUser = await userModel.findUserByEmail(email);
+        if (existingUser) {
+          return res.status(409).json({ message: 'El correo electrónico ya está registrado.' });
+        }
+
     // Validar email si viene en la petición
     if (email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
