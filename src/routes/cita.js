@@ -11,7 +11,10 @@ router.get('/citas', citaController.getCitas);
 // Obtener una cita por ID
 router.get('/:id', citaController.getCitaById);
 
-// Eliminar un usuario
+// Eliminar una cita
 router.delete('/:id', citaController.deleteCita);
+
+// Actualizar una cita
+router.put('/:id', citaController.updateCita);
 
 module.exports = router;
