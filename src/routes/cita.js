@@ -1,11 +1,25 @@
 const express = require('express');
 const router = express.Router();
 const citaController = require("../controllers/citaController");
+const userMiddelware = require("../middlewares/userMiddleware");
+const { verifyToken, authorizeRoles } = require("../middlewares/userMiddleware");
 
 // Ruta para asignar cita
-router.post('/cita', citaController.asignarc);
+router.post('/cita', userMiddelware.verifyToken, citaController.asignarc);
 
-//Obtener todos los usuarios
-router.get('/citas', citaController.getCitas);
+//Obtener todas las citas
+router.get('/citas', userMiddelware.verifyToken, citaController.getCitas);
+
+// Obtener una cita por ID
+router.get('/:id', userMiddelware.verifyToken, citaController.getCitaById);
+
+// Eliminar una cita po su id
+router.delete('/:id', userMiddelware.verifyToken, citaController.deleteCita);
+
+// 🔹 Obtener citas de un barbero
+router.get('/barbero/:id_barbero', verifyToken, authorizeRoles('admin', 'barbero'), citaController.getCitasByBarbero);
+
+// Actualizar una cita
+router.put('/:id', userMiddelware.verifyToken, citaController.updateCita);
 
 module.exports = router;

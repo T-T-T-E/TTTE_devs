@@ -118,3 +118,17 @@ return {id, ...data};
 throw error;
 }
 };
+
+// Obtener todas las citas de un barbero
+exports.getCitasByBarbero = async (id_barbero) => {
+  try {
+    const [rows] = await db.promise().query(
+      'SELECT * FROM citas WHERE id_barbero = ?',
+      [id_barbero]
+    );
+    return rows;
+  } catch (error) {
+    console.error('Error al obtener citas del barbero:', error);
+    throw error;
+  }
+};
