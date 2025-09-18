@@ -12,7 +12,7 @@ app.use('/uploads', express.static('uploads'));
 // Endpoint sencillo
 app.get("/saludo", (req, res) => {
   res.json({
-    mensaje: "orriendo la API con Node.js y Express",
+    mensaje: "orriendo la API con Node.js y Express para una barberia",
     fecha: new Date().toLocaleString()
   });
 });
