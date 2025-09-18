@@ -9,6 +9,14 @@ app.use(express.json());
 // Servir imágenes subidas
 app.use('/uploads', express.static('uploads'));
 
+// Endpoint sencillo
+app.get("/saludo", (req, res) => {
+  res.json({
+    mensaje: "orriendo la API con Node.js y Express",
+    fecha: new Date().toLocaleString()
+  });
+});
+
 // Montamos las rutas de usuario bajo /api
 app.use('/api', userRoutes);
 
