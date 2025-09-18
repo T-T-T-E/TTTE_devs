@@ -11,10 +11,7 @@ app.use('/uploads', express.static('uploads'));
 
 // Endpoint sencillo
 app.get("/saludo", (req, res) => {
-  res.json({
-    mensaje: "orriendo la API con Node.js y Express para una barberia",
-    fecha: new Date().toLocaleString()
-  });
+  res.send("API para barberia en Render funcionando 🚀");
 });
 
 // Montamos las rutas de usuario bajo /api
