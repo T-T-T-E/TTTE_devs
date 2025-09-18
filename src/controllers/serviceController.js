@@ -15,12 +15,6 @@ const createService = async (req, res) => {
             return res.status(409).json({ message: 'El servicio ya existe' });
         }
 
-        // Verificar permisos según el rol del creador
-        const creatorRole = req.userRole; // ← viene del token JWT
-        if (creatorRole === 'barbero' && rol === 'admin') {
-            return res.status(403).json({ message: 'Los clientes nopueden crear servicios.' });
-        }
-
         // Manejo de imagen
         const foto_servicio = req.file ? `uploads/${req.file.filename}` : null;
 
