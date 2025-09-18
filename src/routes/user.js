@@ -16,7 +16,7 @@ router.post('/', verifyToken, authorizeRoles('admin', 'barbero'), userController
 router.post('/login', authController.login)
 
 //Obtener todos los usuarios
-router.get('/users', userMiddelware.verifyToken, userController.getUsers);
+router.get('/users', verifyToken, authorizeRoles('admin', 'barbero'), userController.getUsers);
 
 // Obtener un usuario por ID
 router.get('/:id', userMiddelware.verifyToken, userController.getUserById);
