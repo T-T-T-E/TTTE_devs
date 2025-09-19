@@ -31,7 +31,13 @@ const getAllServices = async (req, res) => {
         const services = await serviceModel.getAllServices();
         res.status(200).json(services);
     } catch (error) {
-        res.status(500).json({ message: 'Error al obtener los servicios', error: error.message });
+        if (error.code === 'ECONNREFUSED' || error.message.includes('connect')) {
+            // Error de conexión a la base de datos
+            res.status(500).json({ message: '❌ Falló la conexión a la base de datos', error: error.message });
+        } else {
+            // Otros errores
+            res.status(500).json({ message: 'Error al obtener los servicios', error: error.message });
+        }
     }
 };
 
