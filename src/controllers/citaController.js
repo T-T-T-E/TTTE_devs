@@ -155,12 +155,6 @@ exports.getCitasByBarbero = async (req, res) => {
     if (citas.length === 0) {
       return res.status(404).json({ message: 'No se encontraron citas para este barbero.' });
     }
-
-   // Verificar permisos según el rol del creador
-    const creatorRole = req.userRole; // ← viene del token JWT
-    if (creatorRole === 'barbero' && rol === 'admin') {
-      return res.status(403).json({ message: 'No posee permisos para realizar esta accion.' });
-    }
     
     res.status(200).json(citas);
   } catch (error) {
