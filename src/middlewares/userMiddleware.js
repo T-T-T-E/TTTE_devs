@@ -21,13 +21,7 @@ exports.verifyToken = (req, res, next) => {
     // Verificar y decodificar el token
     const decoded = jwt.verify(token.replace('Bearer ', ''), JWT_SECRET);
 
-    req.user = {
-      id: decoded.userId,
-      rol: decoded.rol
-    };
-
     console.log("Decoded token:", decoded);
-    console.log("req.user:", req.user);
 
     next(); // Pasar al siguiente middleware o controlador
   } catch (err) {

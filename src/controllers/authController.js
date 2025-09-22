@@ -34,7 +34,7 @@ exports.login = async (req, res) => {
       // 3. Generar un token JWT si las credenciales son válidas
       const token = jwt.sign(payload, JWT_SECRET,{ expiresIn: '8h' }); // tiempo de expiración
   
-      res.status(200).json({ token: token, userId: user.id, rol: user.rol_id});
+      res.status(200).json({ token: token});
 
     } catch (error) {
         console.error('Error en el inicio de sesión:', error);
