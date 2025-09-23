@@ -27,8 +27,8 @@ exports.verifyToken = (req, res, next) => {
     };
 
     console.log("Decoded token:", decoded);
-    console.log("req.user:", req.user);
-
+  console.log("req.user:", req.user);
+  
     next(); // Pasar al siguiente middleware o controlador
   } catch (err) {
     res.status(401).json({ message: 'Token inválido o expirado.' });

@@ -9,6 +9,11 @@ app.use(express.json());
 // Servir imágenes subidas
 app.use('/uploads', express.static('uploads'));
 
+// Endpoint sencillo
+app.get("/saludo", (req, res) => {
+  res.send("API para barberia en Render funcionando 🚀");
+});
+
 // Montamos las rutas de usuario bajo /api
 app.use('/api', userRoutes);
 
