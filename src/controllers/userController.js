@@ -173,16 +173,7 @@ exports.updateUser = async (req, res) => {
           return res.status(409).json({ message: 'El correo electrónico ya está registrado.' });
         }
 
-    // Validar email si viene en la petición
-    if (email) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        return res
-          .status(400)
-          .json({ message: "El correo electrónico no es válido." });
-      }
-    }
-
+    
     // Validar teléfono si viene en la petición
     if (telefono) {
       const phoneRegex = /^[0-9]{8,12}$/;
