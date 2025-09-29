@@ -24,6 +24,7 @@ exports.asignarc = async (req, res) => {
 
     // Crear la nueva cita en la base de datos
     const newCita = await citaModel.createCita({
+      id_cliente,
       nombre_cliente,
       id_servicio,
       id_barbero,

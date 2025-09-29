@@ -20,7 +20,7 @@ router.delete('/:id', userMiddelware.verifyToken, citaController.deleteCita);
 router.get('/barbero/:id_barbero', verifyToken, authorizeRoles('admin', 'barbero'), citaController.getCitasByBarbero);
 
 // 🔹 Obtener citas de un cliente
-router.get('/cliente/:id_cliente', verifyToken, citaController.getCitasByBarbero);
+router.get('/cliente/:id_cliente', verifyToken, citaController.getCitasByCliente);
 
 // Actualizar una cita
 router.put('/:id', userMiddelware.verifyToken, citaController.updateCita);
