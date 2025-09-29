@@ -1,4 +1,5 @@
 const express = require('express');
+const { swaggerUi, swaggerSpec } = require("./swagger");
 const userRoutes = require('./src/routes/user.js');
 const serviceRoutes = require('./src/routes/service');
 const citaRoutes = require('./src/routes/cita');
@@ -21,6 +22,9 @@ app.use('/servicios', serviceRoutes);
 
 app.use('/citas', citaRoutes);
 
+//Documentación Swagger
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 // Ruta de prueba para navegador
 app.get('/', (req, res) => {
   res.send('<h1>Servidor backend corriendo 🚀</h1><p>Prueba las rutas en /api</p>');
@@ -32,4 +36,5 @@ app.get('/', (req, res) => {
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
   console.log(`✅ Servidor escuchando en: http://localhost:${port}`);
+   console.log(`Swagger Docs en http://localhost:${port}/api-docs`);
 });

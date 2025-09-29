@@ -169,7 +169,7 @@ exports.getCitasByCliente = async (req, res) => {
   const { id_cliente } = req.params;
 
   try {
-    const citas = await citaModel.getCitasByBarbero(id_cliente);
+    const citas = await citaModel.getCitasByCliente(id_cliente);
 
     if (citas.length === 0) {
       return res.status(404).json({ message: 'No se encontraron citas para este cliente.' });
