@@ -132,3 +132,17 @@ exports.getCitasByBarbero = async (id_barbero) => {
     throw error;
   }
 };
+
+// Obtener todas las citas de un cliente
+exports.getCitasByCliente = async (id_cliente) => {
+  try {
+    const [rows] = await db.promise().query(
+      'SELECT * FROM citas WHERE id_cliente = ?',
+      [id_cliente]
+    );
+    return rows;
+  } catch (error) {
+    console.error('Error al obtener citas del cliente:', error);
+    throw error;
+  }
+};

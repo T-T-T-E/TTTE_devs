@@ -163,3 +163,21 @@ exports.getCitasByBarbero = async (req, res) => {
   }
 };
 
+// OBTENER CITAS DE UN BARBERO POR SU ID
+exports.getCitasByCliente = async (req, res) => {
+  const { id_cliente } = req.params;
+
+  try {
+    const citas = await citaModel.getCitasByBarbero(id_cliente);
+
+    if (citas.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron citas para este cliente.' });
+    }
+    
+    res.status(200).json(citas);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al obtener citas del cliente.' });
+  }
+};
+
