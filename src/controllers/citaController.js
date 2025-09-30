@@ -81,68 +81,59 @@ exports.deleteCita = async (req, res) => {
 };
 
 exports.updateCita = async (req, res) => {
-  const { id } = req.params; // El ID de la cita a actualizar, extraído de los parámetros de la URL
-  const { nombre_cliente, id_servicio, id_barbero, fecha, hora } = req.body; // Los datos a actualizar, extraídos del cuerpo de la solicitud
+  const { id } = req.params; 
+  // Asegúrate de extraer id_cliente, ya que lo estás actualizando en el modelo
+  const { id_cliente, nombre_cliente, id_servicio, id_barbero, fecha, hora } = req.body; 
 
   try {
-    // 1. Verificar si la cita existe
-    const existingCita = await citaModel.getCitaById(id);
-    if (!existingCita) {
-      return res.status(404).json({ message: 'Cita no encontrada.' });
-    }
-
-    // 2. Validar los datos de entrada (si se proporcionan)
-    if (fecha && !fecha.trim()) {
-      return res.status(400).json({ message: 'La fecha de la cita no puede estar vacía.' });
-    }
-    if (hora && !hora.trim()) {
-      return res.status(400).json({ message: 'La hora de la cita no puede estar vacía.' });
-    }
-
-    // 3. Verificar disponibilidad si se actualiza la fecha o la hora
-    if (fecha || hora) {
-      const updatedFecha = fecha || existingCita.fecha;
-      const updatedHora = hora || existingCita.hora;
-      const updatedBarbero = id_barbero || existingCita.id_barbero;
-
-      // Se debe buscar si el nuevo barbero ya tiene una cita en la fecha y hora seleccionadas,
-      // excluyendo la cita actual que estamos modificando.
-      const conflictingCita = await citaModel.findCitaByBarberAndDateTime(updatedBarbero, updatedFecha, updatedHora, id);
-      if (conflictingCita) {
-        return res.status(409).json({ message: 'El barbero ya tiene una cita asignada para esta nueva fecha y hora.' });
+      // 1. Verificar si la cita existe
+      const existingCita = await citaModel.getCitaById(id);
+      if (!existingCita) {
+          return res.status(404).json({ message: 'Cita no encontrada.' });
       }
-    }
+      
+      // 2. Crear un objeto con los datos a actualizar, usando los valores existentes como fallback
+      const updateData = {
+          id_cliente: id_cliente || existingCita.id_cliente, // <<-- IMPORTANTE: Aquí se agrega id_cliente
+          nombre_cliente: nombre_cliente || existingCita.nombre_cliente,
+          id_servicio: id_servicio || existingCita.id_servicio,
+          id_barbero: id_barbero || existingCita.id_barbero,
+          fecha: fecha || existingCita.fecha,
+          hora: hora || existingCita.hora,
+      };
 
-    // 4. Crear un objeto con los datos a actualizar
-    const updateData = {};
-    if (nombre_cliente) {
-      updateData.nombre_cliente = nombre_cliente;
-    }
-    if (id_servicio) {
-      updateData.id_servicio = id_servicio;
-    }
-    if (id_barbero) {
-      updateData.id_barbero = id_barbero;
-    }
-    if (fecha) {
-      updateData.fecha = fecha;
-    }
-    if (hora) {
-      updateData.hora = hora;
-    }
+      // 3. Verificar disponibilidad si hay cambios en fecha, hora o barbero
+      const dateChanged = fecha && fecha !== existingCita.fecha;
+      const timeChanged = hora && hora !== existingCita.hora;
+      const barberoChanged = id_barbero && parseInt(id_barbero) !== parseInt(existingCita.id_barbero);
 
-    // 5. Llamar a la función del modelo para actualizar la cita
-    const result = await citaModel.updateCita(id, updateData);
-    
-    // Opcional: Validar si la actualización fue exitosa
-    if (result.affectedRows === 0) {
-       return res.status(500).json({ message: 'No se pudo actualizar la cita.' });
-    }
+      if (dateChanged || timeChanged || barberoChanged) {
+          // ¡IMPORTANTE! Se usa la función corregida del modelo con el cuarto parámetro
+          const conflictingCita = await citaModel.findCitaByBarberAndDateTime(
+              updateData.id_barbero, 
+              updateData.fecha, 
+              updateData.hora, 
+              id // El ID de la cita actual para excluirla de la verificación
+          );
+          
+          if (conflictingCita) {
+              return res.status(409).json({ message: 'El barbero ya tiene una cita asignada para esta nueva fecha y hora.' });
+          }
+      }
+      
+      // 4. Llamar a la función del modelo para actualizar la cita
+      // Los datos se pasan directamente del objeto `updateData`
+      const result = await citaModel.updateCita(id, updateData);
+      
+      // El modelo de `updateCita` devuelve un objeto o null.
+      if (!result) { 
+           return res.status(500).json({ message: 'No se pudo actualizar la cita o no hubo cambios.' });
+      }
 
-    res.status(200).json({ message: 'Cita actualizada correctamente.' });
+      res.status(200).json({ message: 'Cita actualizada correctamente.', updatedCita: result });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error al actualizar la cita.' });
+      console.error(error);
+      res.status(500).json({ message: 'Error al actualizar la cita.' });
   }
 };
 

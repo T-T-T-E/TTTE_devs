@@ -5,18 +5,26 @@ const db = require('../config/db.js'); // Conexión a la base de datos (MySQL)
 // FUNCIONES DEL MODELO DE CITA
 // =============================
 
-// NUEVA FUNCIÓN: Verificar si existe una cita para un barbero en una fecha y hora
-exports.findCitaByBarberAndDateTime = async (id_barbero, fecha, hora) => {
- try {
- const [rows] = await db.promise().query(
- 'SELECT COUNT(*) AS count FROM citas WHERE id_barbero = ? AND fecha = ? AND hora = ?',
- [id_barbero, fecha, hora]
- );
- // Si el conteo es mayor a 0, significa que ya existe una cita
- return rows[0].count > 0;
- } catch (error) {
- throw error;
- }
+// Verificar si existe una cita para un barbero en una fecha y hora
+exports.findCitaByBarberAndDateTime = async (id_barbero, fecha, hora, citaIdToExclude = null) => {
+  try {
+      let sql = 'SELECT COUNT(*) AS count FROM citas WHERE id_barbero = ? AND fecha = ? AND hora = ?';
+      const params = [id_barbero, fecha, hora];
+
+      // Si se proporciona un ID para excluir (solo en la actualización)
+      if (citaIdToExclude) {
+          sql += ' AND id != ?'; // Asegura que no cuente la cita que estamos actualizando
+          params.push(citaIdToExclude);
+      }
+
+      const [rows] = await db.promise().query(sql, params);
+      
+      // Si el conteo es mayor a 0, significa que ya existe otra cita que interfiere
+      return rows[0].count > 0;
+  } catch (error) {y
+    console.error("Error en findCitaByBarberAndDateTime:", error); 
+      throw error;
+  }
 };
 
 // Buscar el ID de un servicio por su nombre
