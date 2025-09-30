@@ -2,7 +2,7 @@ const citaModel = require('../models/cita.js');
 
 // Lógica para asignar una cita
 exports.asignarc = async (req, res) => {
-  const { nombre_cliente, id_servicio, id_barbero, fecha, hora } = req.body;
+  const { id_cliente, nombre_cliente, id_servicio, id_barbero, fecha, hora } = req.body;
 
   try {
     // Validar formato de fecha (asegura que no sea un string vacío o nulo)

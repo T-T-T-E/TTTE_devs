@@ -54,7 +54,7 @@ exports.createCita = async (citaData) => {
 
    
     const [result] = await db.promise().query(
-      'INSERT INTO citas (id_cliente, nombre_cliente, id_servicio, id_barbero, fecha, hora) VALUES (?, ?, ?, ?, ?)',
+      'INSERT INTO citas (id_cliente, nombre_cliente, id_servicio, id_barbero, fecha, hora) VALUES (?, ?, ?, ?, ?, ?)',
       [id_cliente, nombre_cliente, id_servicio, id_barbero, fecha, hora]
     );
     // Retorna el ID de la  cita recién insertado
